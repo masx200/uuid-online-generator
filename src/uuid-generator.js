@@ -247,11 +247,20 @@ function generateBatchUUIDs() {
           if (namespace && name) {
             try {
               uuid = uuidv3(namespace, name);
-            } catch {
-              uuid = uuidv3('6ba7b810-9dad-11d1-80b4-00c04fd430c8', namespace);
+            } catch (error) {
+              // If namespace is invalid, use DNS namespace with both namespace and name as fallback
+              const fallbackName = name || namespace || `batch-${i}`;
+              uuid = uuidv3('6ba7b810-9dad-11d1-80b4-00c04fd430c8', fallbackName);
             }
           } else {
-            uuid = uuidv3('6ba7b810-9dad-11d1-80b4-00c04fd430c8', `batch-${i}`);
+            // Use DNS namespace with safe fallback name
+            const safeName = namespace || name || `batch-${i}`;
+            try {
+              uuid = uuidv3('6ba7b810-9dad-11d1-80b4-00c04fd430c8', safeName);
+            } catch (error) {
+              // Ultimate fallback: generate a simple namespace-based UUID
+              uuid = uuidv3('6ba7b810-9dad-11d1-80b4-00c04fd430c8', `batch-${i}`);
+            }
           }
           break;
         case 'v4':
