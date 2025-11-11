@@ -1,1185 +1,284 @@
-<!doctype html>
-<!-- saved from url=(0033)https://www.gitee.com/string/uuid -->
-<html style="height: 100%">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <meta name="keywords" content="UUID,GUID,UUID生成,UUID在线生成" />
-    <meta
-      name="description"
-      content="UUID在线生成,GUID在线生成,UUID在线生成工具,批量生成UUID"
-    />
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UUID在线生成器</title>
+    <meta name="description" content="UUID在线生成器，支持生成多版本UUID，批量生成UUID，支持多种格式输出">
+    <meta name="keywords" content="UUID,GUID,UUID生成,UUID在线生成,批量生成UUID">
 
-    <link rel="stylesheet" href="./UUID在线生成器/layui.css" media="all" />
-    <link rel="stylesheet" href="./UUID在线生成器/main.css" type="text/css" />
-
-    <link rel="icon" href="./UUID在线生成器/icon.png" />
-
-    <style type="text/css">
-      #singleUuid {
-        display: inline-block;
-        width: calc(100% - 170px);
-      }
-
-      #singleRefresh {
-        position: relative;
-        top: -2px;
-        width: 80px;
-      }
-
-      #singleUuidCopy {
-        position: relative;
-        top: -2px;
-        margin-left: 0;
-        width: 80px;
-      }
-
-      .set_font {
-        font-family: "Source Code Pro", monospace;
-      }
-
-      @media screen and (max-width: 450px) {
-        #singleUuid {
-          display: inline-block;
-          width: 100%;
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #singleRefresh {
-          top: 5px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        #singleUuidCopy {
-          top: 5px;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-      }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 200px;
+            max-height: 400px;
+            background: #f8f9fa;
+        }
+
+        .namespace-fields {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .namespace-fields.hidden {
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
     </style>
-    <link
-      id="layuicss-laydate"
-      rel="stylesheet"
-      href="./UUID在线生成器/laydate.css"
-      media="all"
-    />
-    <link
-      id="layuicss-layer"
-      rel="stylesheet"
-      href="./UUID在线生成器/layer.css"
-      media="all"
-    />
-    <link
-      id="layuicss-skincodecss"
-      rel="stylesheet"
-      href="./UUID在线生成器/code.css"
-      media="all"
-    />
-  </head>
+</head>
+<body>
+    <div class="container">
+        <h1>UUID在线生成器</h1>
 
-  <body class="layui-layout-body" style="height: 100%; overflow: auto">
-    <div class="layui-layout layui-layout-admin" style="height: 100%">
-      <div>
-        <style type="text/css">
-          #selectLangAnchor > span {
-            display: none;
-          }
-
-          #mobile_menu_anchor > span {
-            display: none;
-          }
-
-          #userCenterAnchor > span {
-            display: none;
-          }
-
-          .normal_site_title_menu_zh {
-            display: none;
-          }
-
-          .normal_site_title_menu_en {
-            display: none;
-          }
-
-          @media screen and (max-width: 768px) {
-            .normal_site_title_menu_zh {
-              display: unset;
-              position: absolute;
-              top: 16px;
-              color: rgba(255, 255, 255, 0.7);
-              font-size: 20px;
-              left: calc(50vw - 75px);
-              cursor: pointer;
-            }
-
-            .normal_site_title_menu_en {
-              display: unset;
-              position: absolute;
-              top: 18px;
-              color: rgba(255, 255, 255, 0.7);
-              font-size: 20px;
-              left: calc(50vw - 70px);
-              cursor: pointer;
-            }
-          }
-        </style>
-
-        <input type="hidden" value="false" id="commonLogin" />
-        <input type="hidden" value="false" id="commonUserHasVip" />
-
-        <div class="layui-header">
-          <ul class="layui-nav" style="padding: 0px">
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/index">
-                <img
-                  src="./UUID在线生成器/icon-1732875babb6f45ec2e61eaf37a1c0f0.png"
-                  width="25px"
-                  height="25px"
-                />
-              </a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/article/index">文库</a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/base/class?classID=1">字符</a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/base/class?classID=2">转换</a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/base/class?classID=3">加密</a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/base/class?classID=4">网络</a>
-            </li>
-
-            <li class="layui-nav-item layui-hide-xs">
-              <a href="https://www.gitee.com/base/class?classID=5"
-                >更多<span class="layui-nav-more"></span
-              ></a>
-
-              <dl class="layui-nav-child">
-                <dd>
-                  <a href="https://www.gitee.com/base/class?classID=6">图表</a>
-                </dd>
-                <dd>
-                  <a href="https://www.gitee.com/base/class?classID=7">数学</a>
-                </dd>
-                <dd>
-                  <a href="https://www.gitee.com/base/class?classID=8">坐标</a>
-                </dd>
-                <dd>
-                  <a href="https://www.gitee.com/base/class?classID=9">图片</a>
-                </dd>
-                <dd>
-                  <a href="https://www.gitee.com/base/class?classID=10">文件</a>
-                </dd>
-              </dl>
-            </li>
-
-            <li class="layui-nav-item layui-hide-sm layui-show-xs-inline-block">
-              <a
-                href="https://www.gitee.com/string/uuid#"
-                id="mobile_menu_anchor"
-              >
-                <i
-                  class="layui-icon layui-icon-app"
-                  style="font-size: 22px"
-                ></i>
-                <span class="layui-nav-more"></span
-              ></a>
-
-              <dl class="layui-nav-child" style="left: 0; right: unset">
-                <dd>
-                  <dl>
-                    <dd data-class-id="0">
-                      <a
-                        href="https://www.gitee.com/article/index"
-                        style="display: inline-block"
-                      >
-                        文库
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="1">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=1"
-                        style="display: inline-block"
-                      >
-                        字符
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="2">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=2"
-                        style="display: inline-block"
-                      >
-                        转换
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="3">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=3"
-                        style="display: inline-block"
-                      >
-                        加密
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="4">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=4"
-                        style="display: inline-block"
-                      >
-                        网络
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="5">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=5"
-                        style="display: inline-block"
-                      >
-                        更多
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="6">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=6"
-                        style="display: inline-block"
-                      >
-                        图表
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="7">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=7"
-                        style="display: inline-block"
-                      >
-                        数学
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="8">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=8"
-                        style="display: inline-block"
-                      >
-                        坐标
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="9">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=9"
-                        style="display: inline-block"
-                      >
-                        图片
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-                <dd>
-                  <dl>
-                    <dd data-class-id="10">
-                      <a
-                        href="https://www.gitee.com/base/class?classID=10"
-                        style="display: inline-block"
-                      >
-                        文件
-                      </a>
-                    </dd>
-                  </dl>
-                </dd>
-              </dl>
-            </li>
-
-            <span
-              class="layui-nav-bar"
-              style="width: 0px; left: 0px; opacity: 0"
-            ></span>
-          </ul>
-
-          <ul class="layui-nav layui-layout-right" style="padding-right: 0">
-            <li class="layui-nav-item">
-              <a
-                id="userCenterAnchor"
-                href="https://www.gitee.com/login?back-url=https%3A%2F%2Fwww.gitee.com%2Findex&amp;lang=zh"
-              >
-                <i
-                  class="layui-icon layui-icon-user"
-                  style="font-size: 22px"
-                ></i>
-              </a>
-            </li>
-            <span
-              class="layui-nav-bar"
-              style="left: 51px; top: 58px; width: 0px; opacity: 0"
-            ></span>
-          </ul>
-
-          <span class="normal_site_title_menu_zh" onclick="gotoIndex()">
-            <img
-              src="./UUID在线生成器/icon.png"
-              height="25px"
-              width="25px"
-              alt="logo"
-            />
-            <span>在线工具大全</span>
-          </span>
+        <div class="form-group">
+            <label for="singleUuid">生成的UUID</label>
+            <div class="form-row">
+                <input type="text" id="singleUuid" readonly placeholder="点击刷新按钮生成UUID">
+                <button id="singleRefresh" class="btn-primary">刷新</button>
+                <button id="singleUuidCopy" class="btn-secondary">复制</button>
+            </div>
         </div>
-      </div>
 
-      <div class="main_content" style="min-height: calc(100% - 130px)">
-        <div>
-          <input
-            type="hidden"
-            id="defaultUuidV4"
-            value="8ac69329-4fad-4fe6-93f6-a522b8402965"
-          />
-
-          <div>
-            <link
-              rel="stylesheet"
-              href="./UUID在线生成器/share.min-96b5f943f1d0b7d1c54e204a67a8e7e6.css"
-              type="text/css"
-            />
-            <style type="text/css">
-              .tag_container {
-                line-height: 24px;
-              }
-
-              .tag_anchor {
-                color: #01aaed;
-                margin-right: 15px;
-              }
-
-              .tag_container a:nth-child(2) {
-                margin-left: 15px;
-              }
-            </style>
-
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                margin-top: 15px;
-              "
-            >
-              <div>
-                <span
-                  class="layui-breadcrumb"
-                  lay-separator="&gt;"
-                  style="visibility: visible"
-                >
-                  <a href="https://www.gitee.com/index">首页</a
-                  ><span lay-separator="">&gt;</span>
-                  <a href="https://www.gitee.com/base/class?classID=1">字符</a
-                  ><span lay-separator="">&gt;</span>
-                  <a><cite>工具</cite></a>
-                </span>
-              </div>
-              <div style="text-align: right; color: #999" class="layui-hide-xs">
-                <a
-                  style="margin-right: 10px; cursor: pointer; color: #999"
-                  href="https://www.gitee.com/string/uuid#toolNoteIframe"
-                >
-                  <span><i class="layui-icon layui-icon-dialogue"></i></span>
-                  <span style="color: #ff5722">0</span>
-                  <span>评论</span>
-                </a>
-                <span
-                  style="margin-right: 10px; cursor: pointer"
-                  onclick="favoriteHandle()"
-                >
-                  <span
-                    ><i
-                      id="favoriteIcon"
-                      class="layui-icon layui-icon-rate"
-                    ></i>
-                  </span>
-                  <span>收藏</span>
-                </span>
-                <span
-                  style="margin-right: 10px; cursor: pointer"
-                  id="copyToolLinkStatic"
-                >
-                  <span><i class="layui-icon layui-icon-unlink"></i></span>
-                  <span>复制链接</span>
-                </span>
-                <span style="cursor: pointer" onclick="showShare(true)">
-                  <span><i class="layui-icon layui-icon-share"></i></span>
-                  <span>分享</span>
-                </span>
-              </div>
-              <div class="layui-hide-sm" style="color: #999">
-                <a
-                  href="https://www.gitee.com/string/uuid#toolNoteIframe"
-                  style="color: #999; margin-right: 10px"
-                >
-                  <i
-                    class="layui-icon layui-icon-dialogue"
-                    style="font-size: 14px"
-                  ></i>
-                </a>
-                <span onclick="showShare(false)"
-                  ><i
-                    class="layui-icon layui-icon-more-vertical"
-                    style="font-size: 14px"
-                  ></i
-                ></span>
-              </div>
+        <div class="form-row">
+            <div class="form-col">
+                <label for="uuidVersion">UUID版本</label>
+                <select id="uuidVersion">
+                    <option value="v1">Version 1 (时间戳)</option>
+                    <option value="v3">Version 3 (MD5)</option>
+                    <option value="v4" selected>Version 4 (随机)</option>
+                    <option value="v5">Version 5 (SHA-1)</option>
+                    <option value="v6">Version 6 (时间戳)</option>
+                    <option value="v7">Version 7 (时间戳)</option>
+                </select>
             </div>
 
-            <div>
-              <h1 class="main_title">UUID在线生成器</h1>
+            <div class="form-col">
+                <label for="batchCount">生成数量</label>
+                <input type="number" id="batchCount" min="1" max="1000000" value="100">
             </div>
 
-            <div class="tag_container">
-              <span>标签</span>
-
-              <a
-                class="tag_anchor"
-                href="https://www.gitee.com/base/tag/%E5%89%8D%E7%AB%AF"
-                >前端</a
-              ><a
-                class="tag_anchor"
-                href="https://www.gitee.com/base/tag/%E5%90%8E%E7%AB%AF"
-                >后端</a
-              ><a
-                class="tag_anchor"
-                href="https://www.gitee.com/base/tag/%E9%9A%8F%E6%9C%BA"
-                >随机</a
-              ><a class="tag_anchor" href="https://www.gitee.com/base/tag/uuid"
-                >uuid</a
-              ><a class="tag_anchor" href="https://www.gitee.com/base/tag/guid"
-                >guid</a
-              >
-
-              <!--        <th:block th:if="${!commonCurrentEnLang}">-->
-              <!--            <a class="tag_anchor" href="https://www.aliyun.com/minisite/goods?userCode=ufsoqvz5"-->
-              <!--               rel="nofollow external" target="_blank" style="color: #FF5722;">阿里云代金券领取</a>-->
-              <!--            <a class="tag_anchor" href="https://curl.qcloud.com/HPIYI0B8"-->
-              <!--               rel="nofollow external" target="_blank" style="color: #FF5722;">腾讯云_2核2G4M_72元/年</a>-->
-              <!--            <a class="tag_anchor"-->
-              <!--               href="https://activity.huaweicloud.com/discount_area_v5/index.html?fromacct=5314a6fa-3c7a-4f4a-8b89-72125bb0906a&utm_source=cXExNjQ5MDQzOTY==&utm_medium=cps&utm_campaign=201905"-->
-              <!--               rel="nofollow external" target="_blank" style="color: #FF5722;">华为云_1核1G1M_0.9元</a>-->
-              <!--        </th:block>-->
-            </div>
-
-            <div style="margin-top: 16px; margin-bottom: 20px">
-              <hr />
-            </div>
-            <div
-              style="margin-bottom: 20px; overflow-x: hidden; text-align: left"
-            >
-              <!-- lddgo-fix-size -->
-              <ins
-                class="adsbygoogle"
-                style="
-                  display: inline-block;
-                  width: 100%;
-                  height: 90px;
-                  max-width: 728px;
-                  text-align: left;
-                "
-                data-ad-client="ca-pub-8892467592976349"
-                data-ad-slot="5675758383"
-              ></ins>
-            </div>
-          </div>
-
-          <div class="layui-form layui-form-pane" lay-filter="uuidForm">
-            <div class="layui-form-item">
-              <label class="layui-form-label">UUID(V4)</label>
-              <div class="layui-input-block">
-                <input
-                  type="text"
-                  name="singleUuid"
-                  id="singleUuid"
-                  autocomplete="off"
-                  placeholder=""
-                  class="layui-input"
-                  readonly=""
-                />
-                <button class="layui-btn layui-btn-primary" id="singleRefresh">
-                  刷新
-                </button>
-                <button
-                  class="layui-btn layui-btn-primary"
-                  id="singleUuidCopy"
-                  data-clipboard-target="#singleUuid"
-                >
-                  复制
-                </button>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline">
-                <label class="layui-form-label">UUID版本</label>
-                <div class="layui-input-inline">
-                  <select
-                    name="uuidVersion"
-                    id="uuidVersion"
-                    lay-filter="uuidVersion"
-                  >
-                    <option value="v1">Version 1</option>
-                    <option value="v3">Version 3</option>
-                    <option value="v4" selected="">Version 4</option>
-                    <option value="v5">Version 5</option>
-                    <option value="v6">Version 6</option>
-                    <option value="v7">Version 7</option>
-                  </select>
-                  <div class="layui-unselect layui-form-select">
-                    <div class="layui-select-title">
-                      <input
-                        type="text"
-                        placeholder="请选择"
-                        value="Version 4"
-                        readonly=""
-                        class="layui-input layui-unselect"
-                      /><i class="layui-edge"></i>
-                    </div>
-                    <dl class="layui-anim layui-anim-upbit">
-                      <dd lay-value="v1" class="">Version 1</dd>
-                      <dd lay-value="v3" class="">Version 3</dd>
-                      <dd lay-value="v4" class="layui-this">Version 4</dd>
-                      <dd lay-value="v5" class="">Version 5</dd>
-                      <dd lay-value="v6" class="">Version 6</dd>
-                      <dd lay-value="v7" class="">Version 7</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-
-              <div class="layui-inline">
-                <label class="layui-form-label">生成数量</label>
-                <div class="layui-input-inline">
-                  <input
-                    type="number"
-                    min="1"
-                    max="1000000"
-                    name="batchCount"
-                    id="batchCount"
-                    autocomplete="off"
-                    value="100"
-                    lay-reqtext="必填项不能为空"
-                    class="layui-input"
-                    lay-verify="required"
-                  />
-                </div>
-              </div>
-
-              <div class="layui-inline">
-                <label class="layui-form-label">结果格式</label>
-                <div class="layui-input-inline">
-                  <select
-                    name="resultFormat"
-                    lay-filter="resultFormat"
-                    id="resultFormat"
-                  >
-                    <option value="string" selected="">String</option>
-                    <option value="binary">Binary</option>
+            <div class="form-col">
+                <label for="resultFormat">结果格式</label>
+                <select id="resultFormat">
+                    <option value="string" selected>String</option>
                     <option value="hex">Hex</option>
+                    <option value="binary">Binary</option>
                     <option value="base64">Base64</option>
-                  </select>
-                  <div class="layui-unselect layui-form-select">
-                    <div class="layui-select-title">
-                      <input
-                        type="text"
-                        placeholder="请选择"
-                        value="String"
-                        readonly=""
-                        class="layui-input layui-unselect"
-                      /><i class="layui-edge"></i>
-                    </div>
-                    <dl class="layui-anim layui-anim-upbit">
-                      <dd lay-value="string" class="layui-this">String</dd>
-                      <dd lay-value="binary" class="">Binary</dd>
-                      <dd lay-value="hex" class="">Hex</dd>
-                      <dd lay-value="base64" class="">Base64</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
+                </select>
             </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline" id="caseContainer">
-                <label class="layui-form-label">大小写</label>
-                <div class="layui-input-inline" style="width: unset">
-                  <input
-                    type="radio"
-                    name="uuidCase"
-                    lay-filter="uuidCase"
-                    value="upper"
-                    title="大写"
-                  />
-                  <div class="layui-unselect layui-form-radio">
-                    <i class="layui-anim layui-icon"></i>
-                    <div>大写</div>
-                  </div>
-                  <input
-                    type="radio"
-                    name="uuidCase"
-                    lay-filter="uuidCase"
-                    value="lower"
-                    title="小写"
-                    checked=""
-                  />
-                  <div
-                    class="layui-unselect layui-form-radio layui-form-radioed"
-                  >
-                    <i class="layui-anim layui-icon"></i>
-                    <div>小写</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="layui-inline" id="lineContainer">
-                <label class="layui-form-label">中划线</label>
-                <div class="layui-input-inline" style="width: unset">
-                  <input
-                    type="radio"
-                    name="line"
-                    lay-filter="line"
-                    value="keep"
-                    title="保留"
-                    checked=""
-                  />
-                  <div
-                    class="layui-unselect layui-form-radio layui-form-radioed"
-                  >
-                    <i class="layui-anim layui-icon"></i>
-                    <div>保留</div>
-                  </div>
-                  <input
-                    type="radio"
-                    name="line"
-                    lay-filter="line"
-                    value="remove"
-                    title="去除"
-                  />
-                  <div class="layui-unselect layui-form-radio">
-                    <i class="layui-anim layui-icon"></i>
-                    <div>去除</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div id="otherParameterArea">
-              <div
-                class="layui-form-item layui-hide"
-                id="uuidNamespaceNameArea"
-              >
-                <div class="layui-inline">
-                  <label class="layui-form-label">命名空间</label>
-                  <div class="layui-input-inline">
-                    <input
-                      type="text"
-                      name="uuidNamespace"
-                      id="uuidNamespace"
-                      autocomplete="off"
-                      class="layui-input"
-                    />
-                  </div>
-                </div>
-                <div class="layui-inline">
-                  <label class="layui-form-label">名称</label>
-                  <div class="layui-input-inline">
-                    <input
-                      type="text"
-                      name="uuidName"
-                      id="uuidName"
-                      autocomplete="off"
-                      class="layui-input"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="layui-form-item">
-              <div class="layui-inline layui-btn-container">
-                <button
-                  class="layui-btn"
-                  lay-submit=""
-                  lay-filter="startBatch"
-                  id="startBatch"
-                >
-                  生成
-                </button>
-                <button
-                  class="layui-btn layui-btn-primary"
-                  lay-filter="startCopy"
-                  data-clipboard-target="#generateContent"
-                  id="startCopy"
-                >
-                  复制
-                </button>
-                <button
-                  class="layui-btn layui-btn-primary"
-                  lay-filter="startDownload"
-                  id="startDownload"
-                >
-                  下载
-                </button>
-                <button
-                  class="layui-btn layui-btn-primary"
-                  lay-filter="startClear"
-                  id="startClear"
-                >
-                  清空
-                </button>
-              </div>
-
-              <div class="layui-inline"></div>
-            </div>
-
-            <div class="layui-form-item layui-form-text">
-              <label class="layui-form-label">结果</label>
-              <div class="layui-input-block">
-                <div
-                  id="generateContent"
-                  class="layui-textarea set_font"
-                  readonly=""
-                  style="
-                    min-height: 200px;
-                    white-space: pre-wrap;
-                    max-height: 1000px;
-                    overflow: auto;
-                  "
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 30px">
-            <div>
-              <div id="adDiv" style="margin-top: 30px; text-align: left">
-                <ins
-                  class="adsbygoogle"
-                  style="
-                    display: block;
-                    text-align: left;
-                    width: 100%;
-                    max-width: 728px;
-                  "
-                  data-ad-layout="in-article"
-                  data-ad-format="fluid"
-                  data-ad-client="ca-pub-8892467592976349"
-                  data-ad-slot="2237737529"
-                  data-full-width-responsive="true"
-                ></ins>
-              </div>
-
-              <input type="hidden" id="toolID" name="toolID" value="7" />
-              <input
-                type="hidden"
-                id="toolFavorite"
-                name="toolFavorite"
-                value="false"
-              />
-              <input
-                type="hidden"
-                id="toolHasVipRight"
-                name="toolHasVipRight"
-                value="false"
-              />
-
-              <div>
-                <div>
-                  <div
-                    style="
-                      font-size: 20px;
-                      font-weight: 300;
-                      margin-top: 30px;
-                      margin-bottom: 20px;
-                    "
-                  >
-                    相关工具
-                  </div>
-                </div>
-                <div>
-                  <div class="layui-fluid" style="padding: 0">
-                    <div class="layui-row layui-col-space20">
-                      <div
-                        class="layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg3"
-                      >
-                        <div
-                          class="tool_box_layout related_tool"
-                          style="height: unset"
-                        >
-                          <a
-                            style="display: block; cursor: pointer"
-                            href="https://www.gitee.com/string/randompassword"
-                            target="_blank"
-                          >
-                            <div style="margin-top: 20px; text-align: center">
-                              <img
-                                src="./UUID在线生成器/random-tool.png"
-                                height="45px"
-                                width="45px"
-                              />
-                            </div>
-                            <div style="margin-bottom: 20px">
-                              <h3 class="tool_box_title">在线随机密码生成器</h3>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        class="layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg3"
-                      >
-                        <div
-                          class="tool_box_layout related_tool"
-                          style="height: unset"
-                        >
-                          <a
-                            style="display: block; cursor: pointer"
-                            href="https://www.gitee.com/string/seqno"
-                            target="_blank"
-                          >
-                            <div style="margin-top: 20px; text-align: center">
-                              <img
-                                src="./UUID在线生成器/seqno-tool.png"
-                                height="45px"
-                                width="45px"
-                              />
-                            </div>
-                            <div style="margin-bottom: 20px">
-                              <h3 class="tool_box_title">在线序列号生成器</h3>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        class="layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg3"
-                      >
-                        <div
-                          class="tool_box_layout related_tool"
-                          style="height: unset"
-                        >
-                          <a
-                            style="display: block; cursor: pointer"
-                            href="https://www.gitee.com/string/uuid-format-convert-verify"
-                            target="_blank"
-                          >
-                            <div style="margin-top: 20px; text-align: center">
-                              <img
-                                src="./UUID在线生成器/uuid-tool.png"
-                                height="45px"
-                                width="45px"
-                              />
-                            </div>
-                            <div style="margin-bottom: 20px">
-                              <h3 class="tool_box_title">在线UUID转换和校验</h3>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        class="layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg3"
-                      >
-                        <div
-                          class="tool_box_layout related_tool"
-                          style="height: unset"
-                        >
-                          <a
-                            style="display: block; cursor: pointer"
-                            href="https://www.gitee.com/string/ulid-generator"
-                            target="_blank"
-                          >
-                            <div style="margin-top: 20px; text-align: center">
-                              <img
-                                src="./UUID在线生成器/uuid-tool.png"
-                                height="45px"
-                                width="45px"
-                              />
-                            </div>
-                            <div style="margin-bottom: 20px">
-                              <h3 class="tool_box_title">在线ULID生成器</h3>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                      <div
-                        class="layui-col-xs12 layui-col-sm6 layui-col-md4 layui-col-lg3"
-                      >
-                        <div
-                          class="tool_box_layout related_tool"
-                          style="height: unset"
-                        >
-                          <a
-                            style="display: block; cursor: pointer"
-                            href="https://www.gitee.com/string/nanoid-generator"
-                            target="_blank"
-                          >
-                            <div style="margin-top: 20px; text-align: center">
-                              <img
-                                src="./UUID在线生成器/char-tool.png"
-                                height="45px"
-                                width="45px"
-                              />
-                            </div>
-                            <div style="margin-bottom: 20px">
-                              <h3 class="tool_box_title">在线Nano ID生成器</h3>
-                            </div>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <fieldset
-                class="layui-elem-field layui-field-title"
-                style="margin-top: 30px"
-              >
-                <legend>UUID在线生成器-工具简介</legend>
-              </fieldset>
-
-              <div>
-                <p style="word-break: break-all">
-                  UUID在线生成器，GUID在线生成器工具(GUID是微软对UUID的一种称呼)。支持生成Version
-                  1和Version4算法的UUID。一般使用Version4 UUID。
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <fieldset
-            class="layui-elem-field layui-field-title"
-            style="margin-top: 30px"
-          >
-            <legend>UUID在线生成器-使用说明</legend>
-          </fieldset>
-
-          <div id="useNote">
-            <div>
-              <p>
-                UUID在线生成器，支持生成多个版本的 UUID，支持批量生成
-                UUID,并支持下载到文件。
-              </p>
-              <ol>
-                <li>
-                  UUID版本：选择生成的 UUID 版本。本工具支持生成 Version
-                  1,Version 3,Version 4,Version 5,Version 6,Version 7 版本的
-                  UUID 。
-                </li>
-                <li>
-                  生成数量：填写 UUID 生成的数量，数量的范围为 [1,1000000] 。
-                </li>
-                <li>
-                  结果格式：选择 UUID 的结果格式化方式，支持
-                  string,hex,binary,base64 格式。
-                </li>
-                <li>
-                  UUID
-                  <a
-                    href="https://www.gitee.com/base/gservice/api/v1/visit-link?lang=en&amp;target=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FUniversally_unique_identifier"
-                    target="_blank"
-                    style="color: #01aaed"
-                    >英文百科介绍</a
-                  >，
-                  <a
-                    href="https://www.gitee.com/base/gservice/api/v1/visit-link?lang=zh&amp;target=https%3A%2F%2Fzh.wikipedia.org%2Fwiki%2F%25E9%2580%259A%25E7%2594%25A8%25E5%2594%25AF%25E4%25B8%2580%25E8%25AF%2586%25E5%2588%25AB%25E7%25A0%2581"
-                    target="_blank"
-                    style="color: #01aaed"
-                    >中文百科介绍</a
-                  >。
-                </li>
-                <li>
-                  UUID是国际标准化组织（ISO）提出的一个概念。UUID是一个128比特的数值，这个数值可以通过一定的算法计算出来。
-                  UUID用来识别属性类型，在所有空间和时间上被视为唯一的标识。一般来说，可以保证这个值是真正唯一的，
-                  即任何地方产生的任意一个UUID都不会有相同的值。
-                </li>
-                <li>
-                  UUID Version
-                  1：基于时间的UUID，通过计算当前时间戳、随机数和机器MAC地址得到。
-                </li>
-                <li>
-                  UUID Version 2：基于时间和 MAC 地址生成 UUID，DCE
-                  安全版本，RFC 9562 保留版本，未提供具体的实现方式。
-                </li>
-                <li>
-                  UUID Version 3：基于命名空间和名称生成 UUID，使用 MD5
-                  哈希算法。对于一个给定的命名空间和名称，生成的 UUID 为定值。
-                </li>
-                <li>
-                  UUID Version 4：随机UUID，根据随机数，或者伪随机数生成UUID。
-                </li>
-                <li>
-                  UUID Version 5：基于命名空间和名称生成 UUID，使用 SHA1
-                  哈希算法。对于一个给定的命名空间和名称，生成的 UUID 为定值。
-                </li>
-                <li>
-                  UUID Version
-                  6：基于时间的UUID，通过计算当前时间戳、随机数和机器MAC地址得到。
-                </li>
-                <li>
-                  UUID Version
-                  7：基于时间戳和随机数生成，适用于高负载的数据库和分布式系统。
-                </li>
-                <li>UUID Version 8：用户自定义 UUID 生成。</li>
-              </ol>
-            </div>
-          </div>
-
-          <div style="margin-bottom: 30px; margin-top: 30px">
-            <div style="margin-top: 30px; margin-bottom: 30px">
-              <iframe
-                id="toolNoteIframe"
-                src="./UUID在线生成器/index.html"
-                style="
-                  width: 1px;
-                  border: 0px;
-                  min-width: 100%;
-                  overflow: hidden;
-                  height: 244px;
-                "
-                scrolling="no"
-              ></iframe>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div>
-        <style type="text/css">
-          @media screen and (max-width: 768px) {
-            .footer_block_area {
-              display: block;
-            }
+        <div class="form-row">
+            <div class="form-col">
+                <label>大小写</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="caseUpper" name="case" value="upper">
+                        <label for="caseUpper">大写</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="caseLower" name="case" value="lower" checked>
+                        <label for="caseLower">小写</label>
+                    </div>
+                </div>
+            </div>
 
-            .lang_common_footer_margin_adjust {
-              margin-left: unset !important;
-              margin-top: 15px;
-            }
-
-            .adjust_footer_height {
-              height: 210px !important;
-            }
-          }
-        </style>
-        <div class="layui-header adjust_footer_height">
-          <div
-            class="layui-layout-left"
-            style="
-              color: rgba(255, 255, 255, 0.7);
-              margin-top: 20px;
-              margin-left: 20px;
-              z-index: -1000;
-              left: 0;
-            "
-          >
-            <span class="footer_block_area">
-              © 2020-2025 gitee.com 版权所有
-            </span>
-
-            <a
-              class="footer_block_area lang_common_footer_margin_adjust"
-              href="https://www.gitee.com/sitemap.xml"
-              style="color: rgba(255, 255, 255, 0.7); margin-left: 20px"
-              target="_blank"
-              >站点地图</a
-            >
-            <a
-              class="footer_block_area lang_common_footer_margin_adjust"
-              rel="nofollow"
-              href="https://www.gitee.com/"
-              style="color: rgba(255, 255, 255, 0.7); margin-left: 20px"
-              target="_blank"
-              >苏ICP备20039521号-1</a
-            >
-            <!--            <a class="footer_block_area lang_common_footer_margin_adjust"-->
-            <!--               th:href="${commonCurrentEnLang}?'/en/apidoc':'/apidoc'"-->
-            <!--               style="color:rgba(255,255,255,0.7);margin-left:20px"-->
-            <!--               th:text="${commonCurrentEnLang}?'API':'API'">API</a>-->
-            <a
-              class="footer_block_area lang_common_footer_margin_adjust"
-              href="https://www.gitee.com/contact"
-              style="color: rgba(255, 255, 255, 0.7); margin-left: 20px"
-              >联系方式</a
-            >
-          </div>
-
-          <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
-              <a
-                href="https://www.gitee.com/en/index"
-                id="selectLangAnchor"
-                style="padding-right: 0"
-              >
-                <img
-                  src="./UUID在线生成器/lang.svg"
-                  style="width: 30px; height: 30px"
-                  alt="选择语言"
-                />
-                <span style="display: inline">简体中文</span>
-              </a>
-            </li>
-            <span class="layui-nav-bar"></span>
-          </ul>
+            <div class="form-col">
+                <label>中划线</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="lineKeep" name="line" value="keep" checked>
+                        <label for="lineKeep">保留</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="lineRemove" name="line" value="remove">
+                        <label for="lineRemove">去除</label>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="namespace-fields" id="namespaceFields">
+            <h3>命名空间字段 (Version 3 & 5)</h3>
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="uuidNamespace">命名空间UUID</label>
+                    <input type="text" id="uuidNamespace" placeholder="输入UUID命名空间或留空使用默认">
+                </div>
+                <div class="form-col">
+                    <label for="uuidName">名称</label>
+                    <input type="text" id="uuidName" placeholder="输入名称">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="startBatch" class="btn-primary">生成UUID</button>
+            <button id="startCopy" class="btn-secondary">复制结果</button>
+            <button id="startDownload" class="btn-secondary">下载文件</button>
+            <button id="startClear" class="btn-secondary">清空</button>
+        </div>
+
+        <div class="form-group">
+            <label for="generateContent">生成结果</label>
+            <textarea id="generateContent" readonly placeholder="生成的UUID将显示在这里"></textarea>
+        </div>
     </div>
 
-    <div>
-      <!--    百度统计-->
-
-      <!-- Global site tag (gtag.js) - Google Analytics -->
-    </div>
-    <ul class="layui-fixbar" style="bottom: 160px">
-      <li class="layui-icon" lay-type="bar1" style=""></li>
-      <li
-        class="layui-icon layui-fixbar-top"
-        lay-type="top"
-        style="display: none"
-      >
-        
-      </li>
-    </ul>
-  </body>
+    <!-- UUID Generator JavaScript -->
+    <script type="module" src="/src/uuid-generator.js"></script>
+</body>
 </html>

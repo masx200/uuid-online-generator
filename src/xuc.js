@@ -191,21 +191,22 @@ async function loadPlatforms() {
   try {
     showLoading("正在加载平台配置...");
 
-    // Fetch platforms.js
-    const response = await fetch(
-      "https://cdn.jsdelivr.net/gh/masx200/Xget@main/src/config/platforms.js",
-    );
+    // // Fetch platforms.js
+    // const response = await fetch(
+    //   "https://cdn.jsdelivr.net/gh/masx200/Xget@main/src/config/platforms.js",
+    // );
 
-    if (!response.ok) {
-      throw new Error(
-        `获取平台数据失败: ${response.status} ${response.statusText}`,
-      );
-    }
+    // if (!response.ok) {
+    //   throw new Error(
+    //     `获取平台数据失败: ${response.status} ${response.statusText}`,
+    //   );
+    // }
 
-    const fileContent = await response.text();
+    // const fileContent = await response.text();
 
     // Parse the platform data from the JavaScript file
-    platformsData = parsePlatformsData(fileContent);
+    const module=await import('https://cdn.jsdelivr.net/gh/masx200/Xget@main/src/config/platforms.js')
+    platformsData = parsePlatformsData(module);
 
     if (Object.keys(platformsData).length === 0) {
       throw new Error("在配置文件中未找到平台数据");
@@ -225,73 +226,77 @@ async function loadPlatforms() {
  * @returns {Object.<string, string>} Parsed platform mappings
  * @throws {Error} When platform data cannot be parsed
  */
-function parsePlatformsData(fileContent) {
-  try {
-    // First, try to find the PLATFORMS export
-    const platformsMatch = fileContent.match(
-      /export\s+const\s+PLATFORMS\s*=\s*{([\s\S]*?)};/,
-    );
-
-    if (!platformsMatch) {
-      throw new Error("无法在文件中找到 PLATFORMS 对象");
-    }
-
-    // Extract the content between the braces
-    const platformsContent = platformsMatch[1];
-
-    // Parse the object content more carefully
-    const platforms = {};
-
-    // Split by lines and process each line
-    const lines = platformsContent.split("\n");
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-
-      // Skip empty lines, comments, and other non-key-value content
-      if (
-        !trimmed ||
-        trimmed.startsWith("//") ||
-        trimmed.startsWith("/*") ||
-        trimmed.startsWith("*") ||
-        trimmed === "{" ||
-        trimmed === "}" ||
-        trimmed === "," ||
-        !trimmed.includes(":")
-      ) {
-        continue;
-      }
-
-      // Match various key-value patterns
-      // Handles: 'key': 'value', "key": "value", key: 'value', key: "value"
-      const keyValueMatch = trimmed.match(
-        /^['"]?([^'":\s,]+)['"]?\s*:\s*['"]([^'"]+)['"][\s,]*$/,
-      );
-
-      if (keyValueMatch) {
-        const [, key, value] = keyValueMatch;
-        // Clean up the key and value
-        const cleanKey = key.trim();
-        const cleanValue = value.trim();
-
-        // Only add valid HTTP/HTTPS URLs
-        if (cleanValue.startsWith("http")) {
-          platforms[cleanKey] = cleanValue;
-        }
-      }
-    }
-
-    // Validate that we found some platforms
-    if (Object.keys(platforms).length === 0) {
-      throw new Error("未能解析出任何平台数据");
-    }
-
-    console.log(`成功解析 ${Object.keys(platforms).length} 个平台配置`);
-    return platforms;
-  } catch (error) {
-    console.error("解析平台数据出错:", error);
-    throw new Error(`解析平台配置失败: ${error.message}`);
+function parsePlatformsData(module) {
+  if (!module || !module.PLATFORMS) {
+    throw new Error("无法在模块中找到 PLATFORMS 对象");
   }
+  return JSON.parse(JSON.stringify( module.PLATFORMS));
+  // try {
+  //   // First, try to find the PLATFORMS export
+  //   const platformsMatch = fileContent.match(
+  //     /export\s+const\s+PLATFORMS\s*=\s*{([\s\S]*?)};/,
+  //   );
+
+  //   if (!platformsMatch) {
+  //     throw new Error("无法在文件中找到 PLATFORMS 对象");
+  //   }
+
+  //   // Extract the content between the braces
+  //   const platformsContent = platformsMatch[1];
+
+  //   // Parse the object content more carefully
+  //   const platforms = {};
+
+  //   // Split by lines and process each line
+  //   const lines = platformsContent.split("\n");
+
+  //   for (const line of lines) {
+  //     const trimmed = line.trim();
+
+  //     // Skip empty lines, comments, and other non-key-value content
+  //     if (
+  //       !trimmed ||
+  //       trimmed.startsWith("//") ||
+  //       trimmed.startsWith("/*") ||
+  //       trimmed.startsWith("*") ||
+  //       trimmed === "{" ||
+  //       trimmed === "}" ||
+  //       trimmed === "," ||
+  //       !trimmed.includes(":")
+  //     ) {
+  //       continue;
+  //     }
+
+  //     // Match various key-value patterns
+  //     // Handles: 'key': 'value', "key": "value", key: 'value', key: "value"
+  //     const keyValueMatch = trimmed.match(
+  //       /^['"]?([^'":\s,]+)['"]?\s*:\s*['"]([^'"]+)['"][\s,]*$/,
+  //     );
+
+  //     if (keyValueMatch) {
+  //       const [, key, value] = keyValueMatch;
+  //       // Clean up the key and value
+  //       const cleanKey = key.trim();
+  //       const cleanValue = value.trim();
+
+  //       // Only add valid HTTP/HTTPS URLs
+  //       if (cleanValue.startsWith("http")) {
+  //         platforms[cleanKey] = cleanValue;
+  //       }
+  //     }
+  //   }
+
+  //   // Validate that we found some platforms
+  //   if (Object.keys(platforms).length === 0) {
+  //     throw new Error("未能解析出任何平台数据");
+  //   }
+
+  //   console.log(`成功解析 ${Object.keys(platforms).length} 个平台配置`);
+  //   return platforms;
+  // } catch (error) {
+  //   console.error("解析平台数据出错:", error);
+  //   throw new Error(`解析平台配置失败: ${error.message}`);
+  // }
 }
 
 /**
